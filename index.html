@@ -1,16 +1,46 @@
 <html>
-   <head>
-      <title>Sample Page</title>
-   </head>
-   
-   <body>
-      Hello Chatter!
+   	<head>
+   		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    	<title>Sample Page</title>
 
-      <form action = "http://127.0.0.1:9000/channels" method = "GET">
-         Choose a nickname to join the channel:
-         <input type = "text" name = "nick_name">  <br>
-         <input type = "submit" value = "Submit">
-      </form>
+    	<style type="text/css">
+    		#helloNick,#channelGrid {
+    			display: none;
+    		}
+    	</style>
+
+   	</head>
+   
+   	<body>
+   		Welcome to my chat!
+
+    	<div id="nickGrid">
+
+    		<form id="chooseNickForm">
+    			<input type="text" id="chooseNick">
+    			<input type="submit" id="nickBtn" value="Enter">
+    		</form>
+
+    		<div id="helloNick">
+    			<p id="helloUser">Well hello </p>
+    		</div>
+
+    	</div>
+
+     	<div id="channelGrid">
+
+     		<p id="channels">Choose a channel you wanna join if you may please:</p>
+
+     	</div>
+
+     	<!--<form action = "http://127.0.0.1:9000/channels" method = "GET">
+    		Choose a nickname to join the channel:
+    		<input type = "text" name = "nick_name">  <br>
+    		<input type = "submit" value = "Submit">
+    	</form>-->
+
+	<script src="/socket.io/socket.io.js"></script>
+   	<script type="text/javascript" src="http://127.0.0.1:9000/join.js"></script>
 
 
    </body>

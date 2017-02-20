@@ -24,10 +24,10 @@ app.get('/', function (req, res) {
 })
 
 // This responds a POST request for the homepage
-app.post('/', function (req, res) {
-   console.log("Got a POST request for the homepage");
-   res.send('Hello POST');
-})
+//app.post('/', function (req, res) {
+//   console.log("Got a POST request for the homepage");
+//   res.send('Hello POST');
+//})
 
 app.get('/channels', function (req, res) {
    // Prepare output in JSON format
@@ -42,7 +42,16 @@ app.get('/channels', function (req, res) {
 })
 
 io.sockets.on('connection', function(socket) {
+	console.log("server.js: " + socket)
+
+	socket.on('nick_to_srv', function(data) {
+		console.log("server.js: nick_to_front" + data)
+		io.sockets.emit('nick_to_front', data)
+	})
+
+
 	socket.on('send_msg', function(data) {
+		console.log("server.js: " + data)
 		io.sockets.emit('msg_to_chat', data);
 	})
 })
