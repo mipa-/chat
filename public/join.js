@@ -17,12 +17,14 @@
 
 var socket = io.connect();
 
+	//html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 	//nicknamen valinta
 	$("#chooseNick").keypress(function(event){
 		console.log("keypress nickname")
 		if (event.keyCode == 13) {
 			event.preventDefault();
-			nname = $("#chooseNick").val()
+			nname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
 			console.log("keypress keyCode: " + nname)
 			socket.emit('nick_to_srv', nname);
 		}
@@ -62,7 +64,7 @@ var socket = io.connect();
 	var myBtn = document.getElementById('myButton'); 
 	if (myBtn) {	
 		myBtn.addEventListener('click', function(event) { 		
-		temp = document.getElementById("message1").value; 		
+		temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 		
 		socket.emit('send_msg', temp);		
 		$('#message1').val(""); 	
 	}); 	 	}
@@ -71,7 +73,8 @@ var socket = io.connect();
 	$("#message1").keypress(function(event){ 	
 		if(event.keyCode == 13) {		
 			event.preventDefault(); 			
-			temp = document.getElementById("message1").value; 			
+			var temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 		
+			console.log("replace: " + temp)	
 			socket.emit('send_msg', temp);		
 			$('#message1').val(""); 	
 		}
