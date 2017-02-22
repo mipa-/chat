@@ -75,7 +75,21 @@ var socket = io.connect();
 			socket.emit('send_msg', temp);		
 			$('#message1').val(""); 	
 		}
-	}); 
+	});
+
+	$("#leaveButton").click(function(event){
+		socket.emit('leave_channel');
+		$('#channelGrid').show();
+		$('#messageGrid').hide();
+		$('#welcomeChannel').empty();
+		$('#channel').empty();
+	})
+
+	/*socket.on('leaving_channel'), function() {
+		console.log("join.js leaving channel")
+		$('#channelGrid').show();
+		$('#messageGrid').hide();
+	}*/
 
 	socket.on('msg_to_chat', function(data) {
 		console.log("data: " + data.msg)

@@ -52,7 +52,6 @@ io.sockets.on('connection', function(socket) {
 
 		for(i = 0; i < nicknames.length; i++)
 			console.log("nicknames: " + nicknames[i])
-
 	})
 
 	socket.on('join_channel', function(data) {
@@ -63,40 +62,17 @@ io.sockets.on('connection', function(socket) {
 		socket.emit('joining_channel', {nick: socket.nickname, channel: data});
 	})
 
+	socket.on('leave_channel', function(){
+		console.log("leave_channel: " + socket.channel)
+		socket.leave(socket.channel);
+		//socket.emit('leaving_channel');
+	})
+
 	socket.on('send_msg', function(data) {
 		console.log("send_msg server.js: " + data)
 		console.log("send_msg nick: " + socket.nickname)
 		console.log("send_msg channel: " + socket.channel)
-		//io.sockets.emit('msg_to_chat', {nick: socket.nickname, msg: data});
-		//io.to(socket.channel).emit('msg_to_chat', {nick: socket.nickname, msg: data});
 		io.sockets.in(socket.channel).emit('msg_to_chat', {nick: socket.nickname, msg: data});
-
-
 	})
+
 })
-
-// This responds a DELETE request for the /del_user page.
-app.delete('/del_user', function (req, res) {
-   console.log("Got a DELETE request for /del_user");
-   res.send('Hello DELETE');
-})
-
-// This responds a GET request for the /list_user page.
-app.get('/list_user', function (req, res) {
-   console.log("Got a GET request for /list_user");
-   res.send('Page Listing');
-})
-
-// This responds a GET request for abcd, abxcd, ab123cd, and so on
-app.get('/ab*cd', function(req, res) {   
-   console.log("Got a GET request for /ab*cd");
-   res.send('Page Pattern Match');
-})
-
-//var server = app.listen(9000, function () {
-
-  // var host = server.address().address
-  // var port = server.address().port
-
-  // console.log("Example app listening at http://%s:%s", host, port)
-//})
