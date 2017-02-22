@@ -1,0 +1,9 @@
+#chatBody {
+	padding: 20px;
+	text-align: left;
+}
+
+#channelGrid,#chanList,#messageGrid,#channel {
+	text-align: left;
+	list-style-type: none;
+}

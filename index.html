@@ -1,10 +1,14 @@
 <html>
    	<head>
    		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    	<title>Sample Page</title>
+   		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> 
+		<link rel="stylesheet" type="text/css" href="chat.css">
+
+
+    	<title>myChat</title>
 
     	<style type="text/css">
-    		#helloNick,#channelGrid {
+    		#helloNick,#channelGrid,#messageGrid {
     			display: none;
     		}
     	</style>
@@ -12,27 +16,61 @@
    	</head>
    
    	<body>
-   		Welcome to my chat!
 
-    	<div id="nickGrid">
+	   	<div id="chatBody">
 
-    		<form id="chooseNickForm">
-    			<input type="text" id="chooseNick">
-    			<input type="submit" id="nickBtn" value="Enter">
-    		</form>
+	   		<h1>myChat</h1>
 
-    		<div id="helloNick">
-    			<p id="helloUser">Well hello </p>
-    		</div>
+	    	<div id="nickGrid">
 
-    	</div>
+	    		<form id="chooseNickForm">
+	    			Please enter a nickname:
+	    			<input type="text" id="chooseNick">
+	    			<input type="submit" id="nickBtn" value="Enter">
+	    		</form>
 
-     	<div id="channelGrid">
+	    		<div id="helloNick">
+	    			<p id="helloUser">Well hello </p>
+	    		</div>
 
-     		<p id="channels">Choose a channel you wanna join if you may please:</p>
+	    	</div>
 
-     	</div>
+	     	<div id="channelGrid">
 
+	     		<p id="channels">Choose a channel you wanna join if you may please:</p>
+	     		<!--<ul id="chanList"></ul>-->
+
+	     		<form name="chanChooseForm" action="http://127.0.0.1:9000/channels" method = "GET">
+	     			<select id="chanList2" multiple></select>
+	     		</form>
+
+	     		<form>
+	     			Or create a new channel:<br>
+	     			<input type="text" id="newChannel">
+	     			<input type="submit" id="newChanButton" value="Create">
+	     		</form>
+	     	</div>
+
+	     	<div id="messageGrid">
+
+	     		<div id="welcomeChannel"></div>
+
+	     		<p id="channel">
+   				</p>
+
+   				<form id="form1" action="">
+      				<input type="text" id="message1" name="message" />
+      				<input type="button" id="myButton" value="Add"/>
+   				</form>  
+
+   				<form id="formLeave">
+   					<input type="button" name="leaveButton" value="Leave Channel">
+   				</form>
+
+
+	     	</div>
+
+	     </div>
      	<!--<form action = "http://127.0.0.1:9000/channels" method = "GET">
     		Choose a nickname to join the channel:
     		<input type = "text" name = "nick_name">  <br>
