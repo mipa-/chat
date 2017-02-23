@@ -8,6 +8,13 @@
 	list-style-type: none;
 }
 
+#chatLeft {
+	float: left;
+	max-width: 80%;
+}
+
 #userListRight {
 	float: right;
+	border-radius: 25px solid #73AD21;
+	border: 2px;
 }

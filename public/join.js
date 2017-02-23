@@ -1,24 +1,6 @@
-//$( document ).ready(chooseChannel);
-
-
-/*function chooseChannel() {
-	var numbers = ['channel1', 'channel2', 'channel3', 'channel4', 'channel5']; 	
-	var temp = ''; 	
-
-	for (var i=0;i<numbers.length;i++){ 		
-		temp = ''; 		
-		temp = '<li value="'+ numbers[i] + '">' + numbers[i] + '</li>'; 		
-		console.log(temp); 		
-		$('#items').append(temp); 	
-	}
-}*/
-
-//alert("joo");
-
 var socket = io.connect();
 
-	//html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
+	
 	//nicknamen valinta
 	$("#chooseNick").keypress(function(event){
 		console.log("keypress nickname")
@@ -28,6 +10,14 @@ var socket = io.connect();
 			console.log("keypress keyCode: " + nname)
 			socket.emit('nick_to_srv', nname);
 		}
+	})
+
+	$("#nickBtn").click(function(event) {
+		event.preventDefault();
+		console.log("enter nickname")
+		nname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		console.log("keypress keyCode: " + nname)
+		socket.emit('nick_to_srv', nname);
 	})
 
 	socket.on('nick_to_front', function(data) {
@@ -40,8 +30,27 @@ var socket = io.connect();
 		for(i = 0; i < data.chans.length; i++) {
 			console.log("joo: " + data.chans)
 			console.log("chans: " + data.chans[i].name)
+			//<li><a href="#" data-value="1"> Style 1 </a></li>
+			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li></br>');
+			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
+		}
+	})
+
+	socket.on('update_channellist', function(data) {
+		$('#helloNick').show();
+		$('#channelGrid').show();
+		$('#chanList').empty();
+		$('#helloUser').empty();
+		$('#helloUser').append("Well hello " + data.nick);
+		$('#chooseNickForm').hide();
+		
+		//tuodaan käyttäjälle lista kanavista
+		for(i = 0; i < data.chans.length; i++) {
+			console.log("joo: " + data.chans)
+			console.log("chans: " + data.chans[i].name)
 			//$('#chanList').append('<li id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</li></br>');
-			$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
+			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
+			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li></br>');
 		}
 	})
 
@@ -49,8 +58,14 @@ var socket = io.connect();
 		var channel = $('#chanList2 option:selected').text();
 		console.log("select.value: " + channel)
 		socket.emit('join_channel', channel);
-		//window.location.href = "http://127.0.0.1:9000/channels?=" + channel;
+	})
 
+	$("#chanList").on("click", "li", function(event) {
+		event.preventDefault();
+		console.log("menee tänne")
+		var channel = $(this).text();
+		console.log("select.value: " + channel)
+		socket.emit('join_channel', channel);
 	})
 
 	socket.on('joining_channel', function(data){
@@ -64,7 +79,7 @@ var socket = io.connect();
 		console.log("menee user list")
 		$('#usersInRoom').empty();
 		for (i = 0; i < data.length; i++) {
-			$('#usersInRoom').append('<li id="userid' + data[i] + '">' + data[i] + '</li><br>');
+			$('#usersInRoom').append('<li id="userid' + data[i] + '">' + data[i] + '</li>');
 		}
 	})
 
@@ -81,33 +96,15 @@ var socket = io.connect();
 	$("#message1").keypress(function(event){ 	
 		if(event.keyCode == 13) {		
 			event.preventDefault(); 			
-			var temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 		
+			var temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");		
 			console.log("replace: " + temp)	
 			socket.emit('send_msg', temp);		
 			$('#message1').val(""); 	
 		}
 	});
 
-	$("#leaveButton").click(function(event){
-		socket.emit('leave_channel');
-		$('#channelGrid').show();
-		$('#messageGrid').hide();
-		$('#welcomeChannel').empty();
-		$('#channel').empty();
-	})
-
-	/*socket.on('leaving_channel'), function() {
-		console.log("join.js leaving channel")
-		$('#channelGrid').show();
-		$('#messageGrid').hide();
-	}*/
-
 	socket.on('msg_to_chat', function(data) {
-		console.log("data: " + data.msg)
-		console.log("nick: " + data.nick)
-
 		var time = getTime();
-
 		$('#channel').append('[' + time + '] <b>' + data.nick + '</b> : ' + data.msg + '<br>');
 	})
 
@@ -128,5 +125,23 @@ var socket = io.connect();
 		var time = hour + ":" + min + ":" + sec;
 		return time;
 	}
+
+	$("#leaveButton").click(function(event){
+		socket.emit('leave_channel');
+		$('#channelGrid').show();
+		$('#messageGrid').hide();
+		$('#welcomeChannel').empty();
+		$('#channel').empty();
+	})
+
+	$("#newChannel").keypress(function(event) {
+		if(event.keyCode == 13) {
+			event.preventDefault();
+			var temp = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			socket.emit('new_channel', temp);
+			$('#newChannel').val("");
+		}
+	})
+	
 
 

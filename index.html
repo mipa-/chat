@@ -24,7 +24,7 @@
 	    	<div id="nickGrid">
 
 	    		<form id="chooseNickForm">
-	    			Please enter a nickname:
+	    			<label for="chooseNick" id="nickLabe">Please enter a nickname:</label>
 	    			<div class="input-group">
 	    				<input type="text" class="form-control" placeholder="Nickname" id="chooseNick">
 	    				<span class="input-group-btn">
@@ -42,16 +42,20 @@
 	     	<div class="container" id="channelGrid">
 
 	     		<p id="channels">Choose a channel you wanna join if you may please:</p>
-	     		<!--<ul id="chanList"></ul>-->
+	     		<ul id="chanList"></ul>
 
-	     		<form name="chanChooseForm" action="http://127.0.0.1:9000/channels" method = "GET">
+	     		<!--<form name="chanChooseForm" action="http://127.0.0.1:9000/channels" method = "GET">
 	     			<select id="chanList2" multiple></select>
-	     		</form>
+	     		</form>-->
 
 	     		<form>
-	     			Or create a new channel:<br>
-	     			<input type="text" id="newChannel">
-	     			<input type="submit" id="newChanButton" value="Create">
+	     			<label for="newChannel" id="newChanLabel">Or create a new channel:</label>
+	     			<div class="input-group">
+	     				<input type="text" class="form-control" placeholder="Choose a Channel Name" id="newChannel">
+	     				<span class="input-group-btn">
+		     				<input type="submit" class="btn btn-default" id="newChanBtn" value="Create">
+	     				</span>
+	     			</div>
 	     		</form>
 	     	</div>
 
@@ -80,8 +84,11 @@
 	   				</form>
    				</div>
 
-   				<div id="userListRight">
-   					<ul id="usersInRoom"></ul>
+   				<div id="userListRight" class="rounded">
+   					<h3>Users</h3>
+   					<p id="test">
+   						<ul id="usersInRoom" class="list-unstyled"></ul>
+   					</p>
    				</div>
 
 	     	</div>
