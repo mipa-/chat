@@ -39,9 +39,9 @@ var socket = io.connect();
 		//tuodaan käyttäjälle lista kanavista
 		for(i = 0; i < data.chans.length; i++) {
 			console.log("joo: " + data.chans)
-			console.log("chans: " + data.chans[i])
+			console.log("chans: " + data.chans[i].name)
 			//$('#chanList').append('<li id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</li></br>');
-			$('#chanList2').append('<option id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</option></br>');	
+			$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
 		}
 	})
 
@@ -58,6 +58,14 @@ var socket = io.connect();
 		$('#channelGrid').hide();
 		$('#messageGrid').show();
 		$('#welcomeChannel').append('<h3>Welcome to channel ' + data.channel + '</h3>');
+	})
+
+	socket.on('userlist', function(data) {
+		console.log("menee user list")
+		$('#usersInRoom').empty();
+		for (i = 0; i < data.length; i++) {
+			$('#usersInRoom').append('<li id="userid' + data[i] + '">' + data[i] + '</li><br>');
+		}
 	})
 
 	//viesti chattiin buttonilla 	

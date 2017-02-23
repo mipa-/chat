@@ -13,7 +13,12 @@ var io = require('socket.io').listen(server);
 
 app.use(express.static('public'));
 
-var channels = ['Music','Arts','Science','Tech'];
+//var channels = ['Music','Arts','Science','Tech'];
+var channels = [{name: 'Music', users: []},
+				{name: 'Arts', users: []},
+				{name: 'Science', users: []},
+				{name: 'Tech', users: []}
+			];
 var nicknames = [];
 
 // This responds with "Hello World" on the homepage
@@ -42,8 +47,7 @@ app.get('/channels', function (req, res) {
 })
 
 io.sockets.on('connection', function(socket) {
-	//console.log("server.js: " + socket)
-
+	
 	socket.on('nick_to_srv', function(data) {
 		console.log("server.js: nick_to_front" + data)
 		socket.nickname = data;
@@ -58,20 +62,41 @@ io.sockets.on('connection', function(socket) {
 		console.log("nick: " + socket.nickname)
 		socket.channel = data;
 		socket.join(data);
-		console.log("channel: " + data)
+
+		var index = 0;
+		for(i = 0; i < channels.length; i++) {
+			if(channels[i].name == data) {
+				channels[i].users.push(socket.nickname);
+				index = i;
+			}
+		}
+
 		socket.emit('joining_channel', {nick: socket.nickname, channel: data});
+		io.sockets.in(data).emit('userlist', channels[index].users);
 	})
 
 	socket.on('leave_channel', function(){
 		console.log("leave_channel: " + socket.channel)
+		var channel = socket.channel;
 		socket.leave(socket.channel);
-		//socket.emit('leaving_channel');
+
+		console.log("leave_channel: " + socket.channel)
+		
+		var index = 0;
+		for(i = 0; i < channels.length; i++) {
+			if(channels[i].name == channel) {
+				for(j = 0; j < channels[i].users.length; j++) {
+					if (channels[i].users[j] == socket.nickname)
+						channels[i].users.splice(j,1);
+				}
+				index = i;
+			}
+		}
+		io.sockets.in(channel).emit('userlist', channels[index].users);
 	})
 
 	socket.on('send_msg', function(data) {
-		console.log("send_msg server.js: " + data)
-		console.log("send_msg nick: " + socket.nickname)
-		console.log("send_msg channel: " + socket.channel)
+		console.log("server.js send_msg: nick (%s) sent message (%s) to channel (%s)", socket.nickname,data,socket.channel)
 		io.sockets.in(socket.channel).emit('msg_to_chat', {nick: socket.nickname, msg: data});
 	})
 

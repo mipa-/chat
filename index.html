@@ -25,8 +25,12 @@
 
 	    		<form id="chooseNickForm">
 	    			Please enter a nickname:
-	    			<input type="text" id="chooseNick">
-	    			<input type="submit" id="nickBtn" value="Enter">
+	    			<div class="input-group">
+	    				<input type="text" class="form-control" placeholder="Nickname" id="chooseNick">
+	    				<span class="input-group-btn">
+		    				<input type="submit" class="btn btn-default" id="nickBtn" value="Enter">
+						</span>
+	    			</div>
 	    		</form>
 
 	    		<div id="helloNick">
@@ -35,7 +39,7 @@
 
 	    	</div>
 
-	     	<div id="channelGrid">
+	     	<div class="container" id="channelGrid">
 
 	     		<p id="channels">Choose a channel you wanna join if you may please:</p>
 	     		<!--<ul id="chanList"></ul>-->
@@ -53,20 +57,32 @@
 
 	     	<div id="messageGrid">
 
-	     		<div id="welcomeChannel"></div>
+	     		<div id="chatLeft">
 
-	     		<p id="channel">
-   				</p>
+		     		<div id="welcomeChannel"></div>
 
-   				<form id="form1" action="">
-      				<input type="text" id="message1" name="message" />
-      				<input type="button" id="myButton" value="Add"/>
-   				</form>  
+		     		<p id="channel">
+	   				</p>
 
-   				<form id="formLeave">
-   					<input type="button" id="leaveButton" value="Leave Channel">
-   				</form>
+    					<form id="form1" action="">
+    					<div class="input-group">
+   					
+      					<input type="text" id="message1" class="form-control" placeholder="Type Message" name="message" />
+      					<span class="input-group-btn">
+      						<input type="button" class="btn btn-default" id="myButton" value="Send"/>
+      					</span>
+      					</div>
 
+   						</form>  
+   					
+	   				<form id="formLeave">
+	   					<input style="width: 100%" type="button" id="leaveButton" class="btn btn-default" value="Leave Channel">
+	   				</form>
+   				</div>
+
+   				<div id="userListRight">
+   					<ul id="usersInRoom"></ul>
+   				</div>
 
 	     	</div>
 
