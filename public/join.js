@@ -103,9 +103,22 @@ var socket = io.connect();
 		}
 	});
 
+	//sending message to chat
 	socket.on('msg_to_chat', function(data) {
 		var time = getTime();
 		$('#channel').append('[' + time + '] <b>' + data.nick + '</b> : ' + data.msg + '<br>');
+	})
+
+	//sending join messages to chat
+	socket.on('join_msg_chat', function(nickname) {
+		var time = getTime();
+		$('#channel').append('[' + time + '] <i>' + nickname + ' joined the channel...</i><br>');
+	})
+
+	//sending leave message to chat
+	socket.on('leave_msg_chat', function(nickname) {
+		var time = getTime();
+		$('#channel').append('[' + time + '] <i>' + nickname + ' left the channel...</i><br>');
 	})
 
 	function getTime() {

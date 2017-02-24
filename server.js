@@ -13,8 +13,8 @@ var io = require('socket.io').listen(server);
 
 app.use(express.static('public'));
 
-var channels = [{name: 'Music', users: []},
-				{name: 'Arts', users: []},
+var channels = [{name: 'Arts', users: []},
+				{name: 'Music', users: []},
 				{name: 'Science', users: []},
 				{name: 'Tech', users: []}
 			];
@@ -50,6 +50,7 @@ io.sockets.on('connection', function(socket) {
 
 		socket.emit('joining_channel', {nick: socket.nickname, channel: data});
 		io.sockets.in(data).emit('userlist', channels[index].users);
+		io.sockets.in(data).emit('join_msg_chat', socket.nickname);
 	})
 
 	socket.on('leave_channel', function(){
@@ -69,6 +70,7 @@ io.sockets.on('connection', function(socket) {
 		}
 		io.sockets.in(channel).emit('userlist', channels[index].users);
 		socket.emit('update_channellist', {nick: socket.nickname, chans: channels});
+		io.sockets.in(channel).emit('leave_msg_chat', socket.nickname);
 	})
 
 	socket.on('new_channel', function(data, callback) {
@@ -103,6 +105,7 @@ io.sockets.on('connection', function(socket) {
 
 			socket.emit('joining_channel', {nick: socket.nickname, channel: data});
 			io.sockets.in(data).emit('userlist', channels[index].users);
+			io.sockets.in(data).emit('join_msg_chat', socket.nickname);
 		}
 	})
 
@@ -126,7 +129,7 @@ io.sockets.on('connection', function(socket) {
 			}
 		}
 		io.sockets.in(channel).emit('userlist', channels[index].users);
-
+		io.sockets.in(channel).emit('leave_msg_chat', socket.nickname);
 	})
 
 })
