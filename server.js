@@ -36,7 +36,7 @@ io.sockets.on('connection', function(socket) {
 	})
 
 	socket.on('join_channel', function(data) {
-		console.log("nick: " + socket.nickname)
+		console.log("join_channel: nick: " + socket.nickname)
 		socket.channel = data;
 		socket.join(data);
 
@@ -57,8 +57,6 @@ io.sockets.on('connection', function(socket) {
 		var channel = socket.channel;
 		socket.leave(socket.channel);
 
-		console.log("leave_channel: " + socket.channel)
-		
 		var index = 0;
 		for(i = 0; i < channels.length; i++) {
 			if(channels[i].name == channel) {
@@ -73,28 +71,39 @@ io.sockets.on('connection', function(socket) {
 		socket.emit('update_channellist', {nick: socket.nickname, chans: channels});
 	})
 
-	socket.on('new_channel', function(data) {
-		console.log("new channel")
-		var temp = {name: data, users: []};
-		channels.push(temp);
+	socket.on('new_channel', function(data, callback) {
 
-		for(i = 0; i < channels.length; i++) {
-			console.log("channels " + channels[i].name)
-		}
+		var chanExists = false;
 
-		socket.channel = data;
-		socket.join(data);
-
-		var index = 0;
 		for(i = 0; i < channels.length; i++) {
 			if(channels[i].name == data) {
-				channels[i].users.push(socket.nickname);
-				index = i;
+				chanExists = true;
 			}
+		}	
+
+		if(chanExists == true) {
+			callback(false);
 		}
-		
-		socket.emit('joining_channel', {nick: socket.nickname, channel: data});
-		io.sockets.in(data).emit('userlist', channels[index].users);
+
+		else {
+			callback(true);
+			var temp = {name: data, users: []};
+			channels.push(temp);
+
+			socket.channel = data;
+			socket.join(data);
+
+			var index = 0;
+			for(i = 0; i < channels.length; i++) {
+				if(channels[i].name == data) {
+					channels[i].users.push(socket.nickname);
+					index = i;
+				}
+			}
+
+			socket.emit('joining_channel', {nick: socket.nickname, channel: data});
+			io.sockets.in(data).emit('userlist', channels[index].users);
+		}
 	})
 
 	socket.on('send_msg', function(data) {
@@ -106,9 +115,6 @@ io.sockets.on('connection', function(socket) {
 		var channel = socket.channel;
 		socket.leave(socket.channel);
 
-		console.log("leave_channel: " + socket.channel)
-		console.log("leave_channel: " + channel)
-		
 		var index = 0;
 		for(i = 0; i < channels.length; i++) {
 			if(channels[i].name == channel) {

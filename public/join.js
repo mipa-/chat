@@ -28,8 +28,8 @@ var socket = io.connect();
 		
 		//tuodaan käyttäjälle lista kanavista
 		for(i = 0; i < data.chans.length; i++) {
-			console.log("joo: " + data.chans)
-			console.log("chans: " + data.chans[i].name)
+			//console.log("joo: " + data.chans)
+			//console.log("chans: " + data.chans[i].name)
 			//<li><a href="#" data-value="1"> Style 1 </a></li>
 			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
 			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
@@ -46,8 +46,8 @@ var socket = io.connect();
 		
 		//tuodaan käyttäjälle lista kanavista
 		for(i = 0; i < data.chans.length; i++) {
-			console.log("joo: " + data.chans)
-			console.log("chans: " + data.chans[i].name)
+			//console.log("joo: " + data.chans)
+			//console.log("chans: " + data.chans[i].name)
 			//$('#chanList').append('<li id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</li></br>');
 			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
 			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
@@ -149,8 +149,16 @@ var socket = io.connect();
 	//create new channel function
 	function createNewChannel(event) {
 		event.preventDefault();
-		var temp = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-		socket.emit('new_channel', temp);
+		var channel = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		socket.emit('new_channel', channel, function(callback) {
+			if(callback == false) {
+				$('#newChanError').empty();
+				console.log("menee join.js callback falseen")
+				$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> That channel already exists!');
+				$('#newChanError').delay(2500).fadeOut();
+				$('#newChanError').attr('style','display: unset');
+			}
+		});
 		$('#newChannel').val("");
 	}
 

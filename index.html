@@ -39,14 +39,10 @@
 
 	    	</div>
 
-	     	<div class="container" id="channelGrid">
+	     	<div id="channelGrid">
 
 	     		<p id="channels">Choose a channel you wanna join if you may please:</p>
 	     		<ul id="chanList"></ul>
-
-	     		<!--<form name="chanChooseForm" action="http://127.0.0.1:9000/channels" method = "GET">
-	     			<select id="chanList2" multiple></select>
-	     		</form>-->
 
 	     		<form>
 	     			<label for="newChannel" id="newChanLabel">Or create a new channel:</label>
@@ -55,6 +51,9 @@
 	     				<span class="input-group-btn">
 		     				<input type="submit" class="btn btn-default" id="newChanBtn" value="Create">
 	     				</span>
+	     			</div>
+	     			<div id="newChanError">
+	     				
 	     			</div>
 	     		</form>
 	     	</div>
@@ -94,12 +93,7 @@
 	     	</div>
 
 	     </div>
-     	<!--<form action = "http://127.0.0.1:9000/channels" method = "GET">
-    		Choose a nickname to join the channel:
-    		<input type = "text" name = "nick_name">  <br>
-    		<input type = "submit" value = "Submit">
-    	</form>-->
-
+     	
 	<script src="/socket.io/socket.io.js"></script>
    	<script type="text/javascript" src="join.js"></script>
 
