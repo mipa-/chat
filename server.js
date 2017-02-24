@@ -31,9 +31,20 @@ io.sockets.on('connection', function(socket) {
 	socket.on('nick_to_srv', function(nickname, callback) {
 		console.log("server.js: nick_to_front" + nickname)
 		console.log("socket id: " + socket.id)
-		socket.nickname = nickname;
-		nicknames[socket.nickname] = socket;
-		socket.emit('nick_to_front', {nick: socket.nickname, chans: channels} );
+
+		console.log("nicknames[nickname]: " + nicknames[nickname])
+
+		if(nicknames[nickname] == undefined) {
+			console.log("new nickname")
+			callback(true);
+			socket.nickname = nickname;
+			nicknames[socket.nickname] = socket;
+			socket.emit('nick_to_front', {nick: socket.nickname, chans: channels} );
+		}
+		else {
+			console.log("nick not free")
+			callback(false);
+		}
 	})
 
 	socket.on('join_channel', function(data) {
@@ -119,6 +130,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		var channel = socket.channel;
 		socket.leave(socket.channel);
+		delete nicknames[socket.nickname];
 
 		var index = 0;
 		for(i = 0; i < channels.length; i++) {
