@@ -1,86 +1,69 @@
 var socket = io.connect();
 
 	
-	//nicknamen valinta
+	//choose nickname: press enter
 	$("#chooseNick").keypress(function(event){
-		console.log("keypress nickname")
 		if (event.keyCode == 13) {
-			event.preventDefault();
-			nname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			console.log("keypress keyCode: " + nname)
-			socket.emit('nick_to_srv', nname);
+			chooseNickname(event);
 		}
 	})
 
+	//choose nickname: press button
 	$("#nickBtn").click(function(event) {
-		event.preventDefault();
-		console.log("enter nickname")
-		nname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
-		console.log("keypress keyCode: " + nname)
-		socket.emit('nick_to_srv', nname);
+		chooseNickname(event);
 	})
+
+	//choose nickname function
+	function chooseNickname(event) {
+		event.preventDefault();
+		nickname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		socket.emit('nick_to_srv', nickname, function(callback) {
+			console.log("menee tänne")
+		});
+	}
 
 	socket.on('nick_to_front', function(data) {
-		$('#helloNick').show();
+		$('#helloNick').append('<p id="helloUser">Well hello ' + data.nick + '</p>');
 		$('#channelGrid').show();
-		$('#helloUser').append(data.nick);
 		$('#chooseNickForm').hide();
-		
-		//tuodaan käyttäjälle lista kanavista
+		//creating channel list
 		for(i = 0; i < data.chans.length; i++) {
-			//console.log("joo: " + data.chans)
-			//console.log("chans: " + data.chans[i].name)
-			//<li><a href="#" data-value="1"> Style 1 </a></li>
 			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
-			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
 		}
 	})
 
+	//updating channel list
 	socket.on('update_channellist', function(data) {
-		$('#helloNick').show();
-		$('#channelGrid').show();
 		$('#chanList').empty();
-		$('#helloUser').empty();
-		$('#helloUser').append("Well hello " + data.nick);
-		$('#chooseNickForm').hide();
-		
-		//tuodaan käyttäjälle lista kanavista
 		for(i = 0; i < data.chans.length; i++) {
-			//console.log("joo: " + data.chans)
-			//console.log("chans: " + data.chans[i].name)
-			//$('#chanList').append('<li id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</li></br>');
-			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
 			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
 		}
 	})
 
-	$('select').change(function() {
-		var channel = $('#chanList2 option:selected').text();
-		console.log("select.value: " + channel)
-		socket.emit('join_channel', channel);
-	})
-
+	//choosing a channel to join
 	$("#chanList").on("click", "li", function(event) {
 		event.preventDefault();
-		console.log("menee tänne")
 		var channel = $(this).text();
-		console.log("select.value: " + channel)
 		socket.emit('join_channel', channel);
 	})
 
 	socket.on('joining_channel', function(data){
-		console.log("joitain")
 		$('#channelGrid').hide();
 		$('#messageGrid').show();
 		$('#welcomeChannel').append('<h3>Welcome to channel ' + data.channel + '</h3>');
 	})
 
+	//updating user list in channel
 	socket.on('userlist', function(data) {
 		console.log("menee user list")
 		$('#usersInRoom').empty();
 		for (i = 0; i < data.length; i++) {
-			$('#usersInRoom').append('<li id="userid' + data[i] + '">' + data[i] + '</li>');
+			$('#usersInRoom').append('<li><a href="#" id="userid' + data[i] + '" data-value="' + data[i] + '">' + data[i] + '</a></li>');
 		}
+	})
+
+	$("#usersInRoom").on("click", "li", function(event) {
+		event.preventDefault();
 	})
 
 	//viesti chattiin buttonilla 	
@@ -167,7 +150,7 @@ var socket = io.connect();
 			if(callback == false) {
 				$('#newChanError').empty();
 				console.log("menee join.js callback falseen")
-				$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> That channel already exists!');
+				$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> The channel already exists!');
 				$('#newChanError').delay(2500).fadeOut();
 				$('#newChanError').attr('style','display: unset');
 			}

@@ -18,7 +18,7 @@ var channels = [{name: 'Arts', users: []},
 				{name: 'Science', users: []},
 				{name: 'Tech', users: []}
 			];
-var nicknames = [];
+var nicknames = {};
 
 //GET request for homepage
 app.get('/', function (req, res) {
@@ -28,10 +28,11 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function(socket) {
 	
-	socket.on('nick_to_srv', function(data) {
-		console.log("server.js: nick_to_front" + data)
-		socket.nickname = data;
-		nicknames.push(socket.nickname);
+	socket.on('nick_to_srv', function(nickname, callback) {
+		console.log("server.js: nick_to_front" + nickname)
+		console.log("socket id: " + socket.id)
+		socket.nickname = nickname;
+		nicknames[socket.nickname] = socket;
 		socket.emit('nick_to_front', {nick: socket.nickname, chans: channels} );
 	})
 
@@ -78,7 +79,7 @@ io.sockets.on('connection', function(socket) {
 		var chanExists = false;
 
 		for(i = 0; i < channels.length; i++) {
-			if(channels[i].name == data) {
+			if(channels[i].name.toLowerCase() == data.toLowerCase()) {
 				chanExists = true;
 			}
 		}	
@@ -106,6 +107,7 @@ io.sockets.on('connection', function(socket) {
 			socket.emit('joining_channel', {nick: socket.nickname, channel: data});
 			io.sockets.in(data).emit('userlist', channels[index].users);
 			io.sockets.in(data).emit('join_msg_chat', socket.nickname);
+			io.sockets.emit('update_channellist', {nick: socket.nickname, chans: channels});
 		}
 	})
 
