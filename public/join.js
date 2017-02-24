@@ -31,7 +31,7 @@ var socket = io.connect();
 			console.log("joo: " + data.chans)
 			console.log("chans: " + data.chans[i].name)
 			//<li><a href="#" data-value="1"> Style 1 </a></li>
-			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li></br>');
+			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
 			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
 		}
 	})
@@ -50,7 +50,7 @@ var socket = io.connect();
 			console.log("chans: " + data.chans[i].name)
 			//$('#chanList').append('<li id="chanid' + data.chans[i] + '"">' + data.chans[i] + '</li></br>');
 			//$('#chanList2').append('<option id="chanid' + data.chans[i].name + '"">' + data.chans[i].name + '</option></br>');	
-			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li></br>');
+			$('#chanList').append('<li><a href="#" id="chanid' + data.chans[i].name + '" data-value="' + data.chans[i].name + '">' + data.chans[i].name + '</a></li>');
 		}
 	})
 
@@ -134,14 +134,24 @@ var socket = io.connect();
 		$('#channel').empty();
 	})
 
+	//event listener for creating a new channel: press enter
 	$("#newChannel").keypress(function(event) {
 		if(event.keyCode == 13) {
-			event.preventDefault();
-			var temp = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			socket.emit('new_channel', temp);
-			$('#newChannel').val("");
+			createNewChannel(event);
 		}
 	})
+
+	//event listener for creating a new channel: press button
+	$("#newChanBtn").click(function(event){
+		createNewChannel(event);
+	})
 	
+	//create new channel function
+	function createNewChannel(event) {
+		event.preventDefault();
+		var temp = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		socket.emit('new_channel', temp);
+		$('#newChannel').val("");
+	}
 
 
