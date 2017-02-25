@@ -126,11 +126,12 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send_private_message', function(data) {
 		console.log("send_priv_server " + socket.nickname + " to " + data.nick + " " + data.msg)
-		var id2 = nicknames[data.nick].id;
-		var id3 = socket.id;
+		var to_id = nicknames[data.nick].id;
+		var my_id = socket.id;
 		//console.log("joo " + nicknames[data.nick])
-		io.sockets.connected[id2].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
-		io.sockets.connected[id3].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
+		io.sockets.connected[to_id].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
+		if (to_id != my_id)
+			io.sockets.connected[my_id].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
 	})
 
 	socket.on('disconnect', function() {

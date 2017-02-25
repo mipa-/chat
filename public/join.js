@@ -67,7 +67,8 @@ socket.on('userlist', function(data) {
 	console.log("menee user list")
 	$('#usersInRoom').empty();
 	for (i = 0; i < data.length; i++) {
-		$('#usersInRoom').append('<li><a href="#" id="userid' + data[i] + '" data-value="' 
+		var id = data[i].replace(/ /g,"");
+		$('#usersInRoom').append('<li><a href="#" id="userid' + id + '" data-value="' 
 			+ data[i] + '">' + data[i] + '</a></li>');
 	}
 })
@@ -76,7 +77,7 @@ $("#usersInRoom").on("click", "li", function(event) {
 	event.preventDefault();
 	$("a").removeClass('selected');
 	var sendTo = $(this).text();
-    var id = "#userid" + $(this).text();
+    var id = "#userid" + $(this).text().replace(/ /g,"");
 	console.log("id " + id)
 
 	if(sendToSelected == sendTo) {
