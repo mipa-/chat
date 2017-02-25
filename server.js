@@ -30,9 +30,6 @@ io.sockets.on('connection', function(socket) {
 	
 	socket.on('nick_to_srv', function(nickname, callback) {
 		console.log("server.js: nick_to_front" + nickname)
-		console.log("socket id: " + socket.id)
-
-		console.log("nicknames[nickname]: " + nicknames[nickname])
 
 		if(nicknames[nickname] == undefined) {
 			console.log("new nickname")
@@ -125,6 +122,15 @@ io.sockets.on('connection', function(socket) {
 	socket.on('send_msg', function(data) {
 		console.log("server.js send_msg: nick (%s) sent message (%s) to channel (%s)", socket.nickname,data,socket.channel)
 		io.sockets.in(socket.channel).emit('msg_to_chat', {nick: socket.nickname, msg: data});
+	})
+
+	socket.on('send_private_message', function(data) {
+		console.log("send_priv_server " + socket.nickname + " to " + data.nick + " " + data.msg)
+		var id2 = nicknames[data.nick].id;
+		var id3 = socket.id;
+		//console.log("joo " + nicknames[data.nick])
+		io.sockets.connected[id2].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
+		io.sockets.connected[id3].emit('sending_private_message', {nick: socket.nickname, to: data.nick, msg: data.msg});
 	})
 
 	socket.on('disconnect', function() {

@@ -1,5 +1,6 @@
 var socket = io.connect();
 
+var sendToSelected = '';
 	
 //choose nickname: press enter
 $("#chooseNick").keypress(function(event){
@@ -73,6 +74,21 @@ socket.on('userlist', function(data) {
 
 $("#usersInRoom").on("click", "li", function(event) {
 	event.preventDefault();
+	$("a").removeClass('selected');
+	var sendTo = $(this).text();
+    var id = "#userid" + $(this).text();
+	console.log("id " + id)
+
+	if(sendToSelected == sendTo) {
+		$(id).removeClass('selected');
+		$("#message1").attr("placeholder", "Type Message");
+		sendToSelected = "";
+	}
+	else {
+	    $(id).addClass('selected');
+    	$("#message1").attr("placeholder", "Type Message to " + sendTo);
+    	sendToSelected = sendTo;
+    }
 })
 
 //viesti chattiin buttonilla 	
@@ -82,23 +98,38 @@ if (myBtn) {
 	temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 		
 	socket.emit('send_msg', temp);		
 	$('#message1').val(""); 	
-}); 	 	}
+});}
 
 //viesti chattiin enterillä 	
 $("#message1").keypress(function(event){ 	
-	if(event.keyCode == 13) {		
-		event.preventDefault(); 			
-		var temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");		
-		console.log("replace: " + temp)	
-		socket.emit('send_msg', temp);		
-		$('#message1').val(""); 	
+	if(event.keyCode == 13) {
+		sendMessage(event);
 	}
 });
+
+function sendMessage(event) {
+	event.preventDefault();
+	var msg = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");		
+	
+	if(sendToSelected == "")
+		socket.emit('send_msg', msg);
+	if(sendToSelected != "") {
+		console.log("send private message " + sendToSelected + " " + msg)
+		socket.emit('send_private_message', {nick: sendToSelected, msg: msg})
+	}
+	$('#message1').val("");
+}
 
 //sending message to chat
 socket.on('msg_to_chat', function(data) {
 	var time = getTime();
 	$('#channel').append('[' + time + '] <b>' + data.nick + '</b> : ' + data.msg + '<br>');
+})
+
+socket.on('sending_private_message', function(data) {
+	console.log("sending_private_message")
+	var time = getTime();
+	$('#channel').append('[' + time + '] <b>' + data.nick + ' secretly whispers to ' + data.to + ' : </b>' + data.msg + '<br>');
 })
 
 //sending join messages to chat
@@ -111,6 +142,9 @@ socket.on('join_msg_chat', function(nickname) {
 socket.on('leave_msg_chat', function(nickname) {
 	var time = getTime();
 	$('#channel').append('[' + time + '] <i>' + nickname + ' left the channel...</i><br>');
+
+	if(sendToSelected == nickname)
+		sendToSelected = "";
 })
 
 function getTime() {
@@ -132,6 +166,7 @@ function getTime() {
 }
 
 $("#leaveButton").click(function(event){
+	sendToSelected = "";
 	socket.emit('leave_channel');
 	$('#channelGrid').show();
 	$('#messageGrid').hide();
