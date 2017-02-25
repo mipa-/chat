@@ -18,14 +18,27 @@ $("#nickBtn").click(function(event) {
 function chooseNickname(event) {
 	event.preventDefault();
 	nickname = $("#chooseNick").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
-	socket.emit('nick_to_srv', nickname, function(callback) {
-		if(callback == false) {
-			$('#newNickError').empty();
-			$('#newNickError').append('<br><div id="newNickError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> The nickname already exists!');
-			$('#newNickError').delay(2000).fadeOut();
-			$('#newNickError').attr('style','display: unset');
-		}
-	});
+	nickname = nickname.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+
+	var regex = "^\\s+$";
+	if(nickname == "" || nickname.match(regex)) {
+		console.log("error")
+		$('#newNickError').empty();
+		$('#newNickError').append('<br><div id="newNickError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> Please choose a nickname');
+		$('#newNickError').delay(2000).fadeOut();
+		$('#newNickError').attr('style','display: unset');
+	}
+
+	else {
+		socket.emit('nick_to_srv', nickname, function(callback) {
+			if(callback == false) {
+				$('#newNickError').empty();
+				$('#newNickError').append('<br><div id="newNickError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> The nickname already exists!');
+				$('#newNickError').delay(2000).fadeOut();
+				$('#newNickError').attr('style','display: unset');
+			}
+		});
+	}
 	$('#chooseNick').val("");
 }
 
@@ -188,14 +201,27 @@ $("#newChanBtn").click(function(event){
 function createNewChannel(event) {
 	event.preventDefault();
 	var channel = document.getElementById("newChannel").value.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-	socket.emit('new_channel', channel, function(callback) {
-		if(callback == false) {
-			$('#newChanError').empty();
-			console.log("menee join.js callback falseen")
-			$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> The channel already exists!');
-			$('#newChanError').delay(2000).fadeOut();
-			$('#newChanError').attr('style','display: unset');
-		}
-	});
+	channel = channel.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+
+	var regex = "^\\s+$";
+	if(channel == "" || channel.match(regex)) {
+		console.log("channelerror")
+		$('#newChanError').empty();
+		$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> Please choose a channel name');
+		$('#newChanError').delay(2000).fadeOut();
+		$('#newChanError').attr('style','display: unset');
+	}
+
+	else {
+		socket.emit('new_channel', channel, function(callback) {
+			if(callback == false) {
+				$('#newChanError').empty();
+				console.log("menee join.js callback falseen")
+				$('#newChanError').append('<br><div id="newChanError2" class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign"></span><span class="sr-only">Error:</span> The channel already exists!');
+				$('#newChanError').delay(2000).fadeOut();
+				$('#newChanError').attr('style','display: unset');
+			}
+		});
+	}
 	$('#newChannel').val("");
 }

@@ -31,6 +31,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('nick_to_srv', function(nickname, callback) {
 		console.log("server.js: nick_to_front" + nickname)
 
+		if(nickname.length > 15)
+			nickname = nickname.substring(0,15);
+
 		if(nicknames[nickname] == undefined) {
 			console.log("new nickname")
 			callback(true);
@@ -85,6 +88,9 @@ io.sockets.on('connection', function(socket) {
 	socket.on('new_channel', function(data, callback) {
 
 		var chanExists = false;
+
+		if(data.length > 15)
+			data = data.substring(0,15);
 
 		for(i = 0; i < channels.length; i++) {
 			if(channels[i].name.toLowerCase() == data.toLowerCase()) {
