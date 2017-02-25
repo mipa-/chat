@@ -92,16 +92,12 @@ $("#usersInRoom").on("click", "li", function(event) {
     }
 })
 
-//viesti chattiin buttonilla 	
-var myBtn = document.getElementById('myButton'); 
-if (myBtn) {	
-	myBtn.addEventListener('click', function(event) { 		
-	temp = document.getElementById("message1").value.replace(/</g, "&lt;").replace(/>/g, "&gt;"); 		
-	socket.emit('send_msg', temp);		
-	$('#message1').val(""); 	
-});}
+//sending message to chat: press button
+$("#myButton").click(function(event) {
+	sendMessage(event);
+})
 
-//viesti chattiin enterillä 	
+//sending message to chat: press enter
 $("#message1").keypress(function(event){ 	
 	if(event.keyCode == 13) {
 		sendMessage(event);
@@ -127,6 +123,7 @@ socket.on('msg_to_chat', function(data) {
 	$('#channel').append('[' + time + '] <b>' + data.nick + '</b> : ' + data.msg + '<br>');
 })
 
+//sending private message to another user
 socket.on('sending_private_message', function(data) {
 	console.log("sending_private_message")
 	var time = getTime();
